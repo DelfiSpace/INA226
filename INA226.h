@@ -2,7 +2,7 @@
 #define __INA226_H__
 
 #include "Energia.h"
-#include <Wire.h>
+#include <DWire.h>
 
 #define CONFIGURATION    0x00
 #define SHUNT            0x01
@@ -17,12 +17,17 @@
 #define CALIBRATION_REF  40.96f
 
 class INA226
+
 {
 protected:
+    DWire *wire;
     unsigned char address;
 
+
 public:
-    INA226(unsigned char);
+
+    INA226(DWire*, unsigned char);
+
     virtual ~INA226( ) {};
     
     void reset();
