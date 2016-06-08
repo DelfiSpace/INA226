@@ -5,13 +5,12 @@
  *   INA226 class creator function
  *   
  *   Parameters:
- *   DWire *i2c             I2C object pointer
+ *   DWire &i2c             I2C object
  *   unsigned char addr     I2C address (7 bits)
  *
  */
-INA226::INA226(DWire *i2c, unsigned char addr)
+INA226::INA226(DWire &i2c, unsigned char addr): wire(i2c)
 {
-    wire = i2c;
     address = addr;
 }
 
@@ -121,17 +120,17 @@ unsigned short INA226::getPower()
 unsigned short INA226::readRegister(unsigned char reg)
 {
     unsigned short ret = -1;
-    wire->beginTransmission(address);
-    wire->write(reg);
+    wire.beginTransmission(address);
+    wire.write(reg);
     //wire.endTransmission(false);
 
     //delay(30);
     // use the casting to prevent warning on ambiguous conversion
-    unsigned char res = wire->requestFrom(address, 2);
+    unsigned char res = wire.requestFrom(address, 2);
     if (res == 2)
     {
-        ((unsigned char*)&ret)[1] = wire->read();
-        ((unsigned char*)&ret)[0] = wire->read();
+        ((unsigned char*)&ret)[1] = wire.read();
+        ((unsigned char*)&ret)[0] = wire.read();
     }
 
 
@@ -150,10 +149,10 @@ unsigned short INA226::readRegister(unsigned char reg)
  */
 void INA226::writeRegister(unsigned char reg, unsigned short val)
 {
-    wire->beginTransmission(address);
-    wire->write(reg);
-    wire->write((val >> 8) & 0xFF);
-    wire->write(val & 0xFF);      
+    wire.beginTransmission(address);
+    wire.write(reg);
+    wire.write((val >> 8) & 0xFF);
+    wire.write(val & 0xFF);      
 
-    wire->endTransmission(true);
+    wire.endTransmission(true);
 }

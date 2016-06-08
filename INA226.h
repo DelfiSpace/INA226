@@ -20,14 +20,12 @@ class INA226
 
 {
 protected:
-    DWire *wire;
+    DWire &wire;
     unsigned char address;
 
 
 public:
-
-    INA226(DWire*, unsigned char);
-
+    INA226(DWire&, unsigned char);
     virtual ~INA226( ) {};
     
     void reset();
