@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2016 by Stefano Speretta <s.speretta@tudelft.nl>
+ *
+ * INA226: a library to provide high level APIs to interface with the 
+ * TI INA226 current sensor. It is possible to use this library in 
+ * Energia (the Arduino port for MSP microcontrollers) or in other 
+ * toolchains.
+ *
+ * This file is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License 
+ * version 3, both as published by the Free Software Foundation.
+ *
+ */
+ 
 #include "INA226.h"
 
 /**
