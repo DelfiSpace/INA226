@@ -12,7 +12,7 @@
  *
  */
  
-#include "INA226.h"
+#include <INA226.h>
 
 /**
  *
@@ -136,17 +136,13 @@ unsigned short INA226::readRegister(unsigned char reg)
     unsigned short ret = -1;
     wire.beginTransmission(address);
     wire.write(reg);
-    //wire.endTransmission(false);
 
-    //delay(30);
-    // use the casting to prevent warning on ambiguous conversion
     unsigned char res = wire.requestFrom(address, 2);
     if (res == 2)
     {
         ((unsigned char*)&ret)[1] = wire.read();
         ((unsigned char*)&ret)[0] = wire.read();
     }
-
 
     return ret;
 }
@@ -167,6 +163,5 @@ void INA226::writeRegister(unsigned char reg, unsigned short val)
     wire.write(reg);
     wire.write((val >> 8) & 0xFF);
     wire.write(val & 0xFF);      
-
-    wire.endTransmission(true);
+    wire.endTransmission();
 }

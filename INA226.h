@@ -15,7 +15,7 @@
 #ifndef __INA226_H__
 #define __INA226_H__
 
-#include "Energia.h"
+#include <Energia.h>
 #include <DWire.h>
 
 #define CONFIGURATION    0x00
@@ -36,7 +36,6 @@ class INA226
 protected:
     DWire &wire;
     unsigned char address;
-
 
 public:
     INA226(DWire&, unsigned char);
@@ -59,8 +58,7 @@ public:
     void writeRegister(unsigned char, unsigned short); 
 
 private:
-    
-    
+     
 };
 
 #endif // __INA226_H__ 
