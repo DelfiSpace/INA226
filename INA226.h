@@ -15,7 +15,6 @@
 #ifndef __INA226_H__
 #define __INA226_H__
 
-#include <Energia.h>
 #include <DWire.h>
 
 #define CONFIGURATION    0x00

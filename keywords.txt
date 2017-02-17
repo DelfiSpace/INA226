@@ -1,0 +1,10 @@
+INA226	KEYWORD1
+readRegister	KEYWORD2
+writeRegister	KEYWORD2
+reset	KEYWORD2
+ping	KEYWORD2
+setShuntResistor	KEYWORD2
+getShuntVoltage	KEYWORD2
+getVoltage	KEYWORD2
+getCurrent	KEYWORD2
+getPower	KEYWORD2
