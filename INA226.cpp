@@ -115,7 +115,7 @@ signed short INA226::getCurrent()
  */
 unsigned short INA226::getPower()
 {
-    unsigned short p= readRegister(POWER);
+    unsigned short p = readRegister(POWER);
     return (p * 3) + (p >> 3);
 }
 
