@@ -32,10 +32,14 @@ INA226::INA226(DWire &i2c, unsigned char addr): wire(i2c)
  *
  *   Reset the INA226
  *
+ *   Returns:
+ *   unsigned char         0 succes
+ *                         1 fail
+ *
  */
-void INA226::reset()
+unsigned char INA226::reset()
 {
-   writeRegister(CONFIGURATION, RESET);
+   return writeRegister(CONFIGURATION, RESET);
 }
 
 /**
@@ -43,13 +47,15 @@ void INA226::reset()
  *   Verify if INA226 is present
  *   
  *   Returns:
- *   true                  INA226 is present
- *   false                 otherwise
+ *   unsigned char         1 device found
+ *                         0 device not found
  *
  */
 unsigned char INA226::ping()
 {
-    return readRegister(ID) == DEVICE_ID;
+	unsigned short id;
+	unsigned char r = readRegister(ID, id);
+	return !r && (id == DEVICE_ID);
 }
 
 /**
@@ -59,109 +65,139 @@ unsigned char INA226::ping()
  *   Parameters:
  *   double shunt          shunt resistor value in Ohm
  *
+ *   Returns:
+ *   unsigned char         0 succes
+ *                         1 fail
+ *
  */
-void INA226:: setShuntResistor(double shunt)
+unsigned char INA226:: setShuntResistor(double shunt)
 {
-    writeRegister(CALIBRATION, (unsigned short)(CALIBRATION_REF / shunt));
+    return writeRegister(CALIBRATION, (unsigned short)(CALIBRATION_REF / shunt));
 }
 
 /**
  *
  *   Returns the bus voltage in mV
  *   
+ *   Parameters:
+ *   unsigned short &      bus voltage in mV
+ *
  *   Returns:
- *   unsigned short        bus voltage in mV
+ *   unsigned char         0 succes
+ *                         1 fail
  *
  */
-unsigned short INA226::getVoltage()
+unsigned char INA226::getVoltage(unsigned short &v)
 {
-    unsigned short v = readRegister(VOLTAGE);
-    return v + (v >> 2);
+    unsigned char ret = readRegister(VOLTAGE, v);
+    v = v + (v >> 2);
+    return ret;
 }
 
 /**
  *
  *   Returns the voltage across the shunt resistor
  *   
+ *   Parameters:
+ *   signed short &      bus voltage (LSB = 2.5 uV)
+ *
  *   Returns:
- *   signed short        bus voltage (LSB = 2.5 uV)
+ *   unsigned char         0 succes
+ *                         1 fail
  *
  */
-signed short INA226::getShuntVoltage()
+unsigned char INA226::getShuntVoltage(signed short &v)
 {
-    return readRegister(SHUNT);
+    return readRegister(SHUNT, reinterpret_cast<unsigned short&>(v));
 }
 
 /**
  *
  *   Returns the current through the shunt resistor
  *   
+ *   Parameters:
+ *   signed short &        current in mA
+ *
  *   Returns:
- *   signed short         current in mA
+ *   unsigned char         0 succes
+ *                         1 fail
  *
  */
-signed short INA226::getCurrent()
+unsigned char INA226::getCurrent(signed short &c)
 {
-    return readRegister(CURRENT) >> 3;
+    unsigned char ret = readRegister(CURRENT, reinterpret_cast<unsigned short&>(c));
+    c >>= 3;
+    return ret;
 }
 
 /**
  *
  *   Returns the power across the load in mW
  *   
+ *   Parameters:
+ *   unsigned short &      power in mW
+ *
  *   Returns:
- *   unsigned short        power in mW
+ *   unsigned char         0 succes
+ *                         1 fail
  *
  */
-unsigned short INA226::getPower()
+unsigned char INA226::getPower(unsigned short &p)
 {
-    unsigned short p = readRegister(POWER);
-    return (p * 3) + (p >> 3);
+    unsigned char ret = readRegister(POWER, p);
+    p = (p * 3) + (p >> 3);
+    return ret;
 }
 
 /**
  *
  *   Returns the value of the selected internal register
- *   
  *
  *   Parameters:
  *   unsigned char reg     register number
+ *   unsigned short &      register value
  *
  *   Returns:
- *   unsigned short        register value
+ *   unsigned char         0 succes
+ *                         1 fail
  *
  */
-unsigned short INA226::readRegister(unsigned char reg)
+unsigned char INA226::readRegister(unsigned char reg, unsigned short &output)
 {
-    unsigned short ret = -1;
     wire.beginTransmission(address);
     wire.write(reg);
 
     unsigned char res = wire.requestFrom(address, 2);
     if (res == 2)
     {
-        ((unsigned char*)&ret)[1] = wire.read();
-        ((unsigned char*)&ret)[0] = wire.read();
+    	output = ((unsigned short)wire.read()) << 8;
+    	output |= wire.read() & 0xFF;
+        return 0;
     }
-
-    return ret;
+	else
+	{
+    	return 1;
+    }
 }
 
 /**
  *
  *   Sets the value of the selected internal register
- *   
  *
  *   Parameters:
  *   unsigned char reg     register number
  *   unsigned short        register value
  *
+ *   Returns:
+ *   unsigned char         0 succes
+ *                         1 fail
+ *
  */
-void INA226::writeRegister(unsigned char reg, unsigned short val)
+unsigned char INA226::writeRegister(unsigned char reg, unsigned short val)
 {
     wire.beginTransmission(address);
     wire.write(reg);
     wire.write((val >> 8) & 0xFF);
     wire.write(val & 0xFF);      
-    wire.endTransmission();
+    return wire.endTransmission();
 }

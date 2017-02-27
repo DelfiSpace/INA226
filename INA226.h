@@ -40,21 +40,21 @@ public:
     INA226(DWire&, unsigned char);
     virtual ~INA226( ) {};
     
-    void reset();
+    unsigned char reset();
     unsigned char ping();
 
     // configure the device
-    void setShuntResistor(double);
+    unsigned char setShuntResistor(double);
 
     // functions used to retrieve the measurements from the device
-    signed short getShuntVoltage();
-    unsigned short getVoltage();
-    signed short getCurrent();
-    unsigned short getPower();
+    unsigned char getShuntVoltage(signed short &);
+    unsigned char getVoltage(unsigned short &);
+    unsigned char getCurrent(signed short &);
+    unsigned char getPower(unsigned short &);
 
     // used only for debug purposes, use the other functions in normal code
-    unsigned short readRegister(unsigned char);
-    void writeRegister(unsigned char, unsigned short); 
+    unsigned char readRegister(unsigned char, unsigned short &);
+    unsigned char writeRegister(unsigned char, unsigned short); 
 
 private:
      
