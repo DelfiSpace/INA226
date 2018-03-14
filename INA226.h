@@ -1,63 +1,36 @@
 /*
  * Copyright (c) 2016 by Stefano Speretta <s.speretta@tudelft.nl>
  *
- * INA226: a library to provide high level APIs to interface with the 
- * TI INA226 current sensor. It is possible to use this library in 
- * Energia (the Arduino port for MSP microcontrollers) or in other 
+ * INA226: a library to provide high level APIs to interface with the
+ * TI INA226 current sensor. It is possible to use this library in
+ * Energia (the Arduino port for MSP microcontrollers) or in other
  * toolchains.
  *
  * This file is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License 
+ * it under the terms of the GNU Lesser General Public License
  * version 3, both as published by the Free Software Foundation.
  *
  */
- 
+
 #ifndef __INA226_H__
 #define __INA226_H__
 
-#include <DWire.h>
+#include "satellite.h"
+#include <stdint.h>
+#include <stdbool.h>
 
-#define CONFIGURATION    0x00
-#define SHUNT            0x01
-#define VOLTAGE          0x02
-#define POWER            0x03
-#define CURRENT          0x04
-#define CALIBRATION      0x05
-#define ID               0xFF
+void ina_reset(dev_id id);
 
-#define DEVICE_ID        0x2260
-#define RESET            0x8000
-#define CALIBRATION_REF  40.96f
+bool ina_readDeviceID(dev_id id);
 
-class INA226
+void ina_setShuntResistor(dev_id id, double shunt);
 
-{
-protected:
-    DWire &wire;
-    unsigned char address;
+uint16_t ina_getVoltage(dev_id id);
 
-public:
-    INA226(DWire&, unsigned char);
-    virtual ~INA226( ) {};
-    
-    void reset();
-    unsigned char ping();
+int16_t ina_getShuntVoltage(dev_id id);
 
-    // configure the device
-    void setShuntResistor(double);
+int16_t ina_getCurrent(dev_id id);
 
-    // functions used to retrieve the measurements from the device
-    signed short getShuntVoltage();
-    unsigned short getVoltage();
-    signed short getCurrent();
-    unsigned short getPower();
+uint16_t ina_getPower(dev_id id);
 
-    // used only for debug purposes, use the other functions in normal code
-    unsigned short readRegister(unsigned char);
-    void writeRegister(unsigned char, unsigned short); 
-
-private:
-     
-};
-
-#endif // __INA226_H__ 
+#endif // __INA226_H__
