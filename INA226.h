@@ -90,10 +90,10 @@ float INA226_readShuntCurrent(const dev_id id, float currentLSB);
 float INA226_readShuntVoltage(const dev_id id);
 float INA226_readBusVoltage(const dev_id id);
 
-uint16_t INA226_readBusPower_raw(const dev_id id);
-uint16_t INA226_readShuntCurrent_raw(const dev_id id);
-uint16_t INA226_readShuntVoltage_raw(const dev_id id);
-uint16_t INA226_readBusVoltage_raw(const dev_id id);
+bool INA226_readBusPower_raw(const dev_id id, uint16_t *power);
+bool INA226_readShuntCurrent_raw(const dev_id id, uint16_t *current);
+bool INA226_readShuntVoltage_raw(const dev_id id, uint16_t *voltage);
+bool INA226_readBusVoltage_raw(const dev_id id, uint16_t *voltage);
 
 float INA226_rawBusPower(int16_t power, float powerLSB);
 float INA226_rawShuntCurrent(int16_t current, float currentLSB);

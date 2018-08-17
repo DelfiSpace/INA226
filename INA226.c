@@ -13,7 +13,7 @@
  */
 
 #include "INA226.h"
-#include "hal_uart.h"
+#include "hal_functions.h"
 #include <math.h>
 
 #define CONFIGURATION    0x00
@@ -81,14 +81,14 @@ uint8_t ina_readRegister(const dev_id id, uint8_t reg, uint16_t *res)
 
     uint8_t rx_buf[3] = { reg, 0, 0 };
 
-    HAL_I2C_readWrite(id, rx_buf, 1, res, 2);
+    bool res1 = HAL_I2C_readWrite(id, rx_buf, 1, res, 2);
 
     uint16_t temp;
     temp = *res;
     *res = ((0x00ff & temp) << 8);
     *res |= (temp >> 8);
 
-    return 0;
+    return res1;
 }
 
 /**
@@ -101,13 +101,15 @@ uint8_t ina_readRegister(const dev_id id, uint8_t reg, uint16_t *res)
  *   unsigned short        register value
  *
  */
-void ina_writeRegister(const dev_id id, const uint8_t reg, const uint16_t val)
+bool ina_writeRegister(const dev_id id, const uint8_t reg, const uint16_t val)
 {
     uint8_t tx_buf[3] = { reg, ((val >> 8) & 0xFF), (val & 0xFF) };
  //   uint8_t rx_buf[3] = { };
 
 //    HAL_I2C_readWrite(id, tx_buf, 3, rx_buf, 0);
-    HAL_I2C_readWrite(id, tx_buf, 3, NULL, 0);
+    bool res = HAL_I2C_readWrite(id, tx_buf, 3, NULL, 0);
+
+    return res;
 
 }
 
@@ -230,40 +232,40 @@ float INA226_rawBusVoltage(uint16_t voltage)
      return (voltage * 0.00125);
 }
 
-uint16_t INA226_readBusPower_raw(const dev_id id)
+bool INA226_readBusPower_raw(const dev_id id, uint16_t *power)
 {
-    uint16_t power;
+    bool res;
 
-    ina_readRegister(id, INA226_REG_POWER, &power);
+    res = ina_readRegister(id, INA226_REG_POWER, power);
 
-    return (power);
+    return res;
 }
 
-uint16_t INA226_readShuntCurrent_raw(const dev_id id)
+bool INA226_readShuntCurrent_raw(const dev_id id, uint16_t *current)
 {
-    uint16_t current;
+    bool res;
 
-    ina_readRegister(id, INA226_REG_CURRENT, &current);
+    res = ina_readRegister(id, INA226_REG_CURRENT, current);
 
-    return (current);
+    return res;
 }
 
-uint16_t INA226_readShuntVoltage_raw(const dev_id id)
+bool INA226_readShuntVoltage_raw(const dev_id id, uint16_t *voltage)
 {
-    uint16_t voltage;
+    bool res;
 
-    ina_readRegister(id, INA226_REG_SHUNTVOLTAGE, &voltage);
+    res = ina_readRegister(id, INA226_REG_SHUNTVOLTAGE, voltage);
 
-    return (voltage);
+    return res;
 }
 
-uint16_t INA226_readBusVoltage_raw(const dev_id id)
+bool INA226_readBusVoltage_raw(const dev_id id, uint16_t *voltage)
 {
-    uint16_t voltage;
+    bool res;
 
-    ina_readRegister(id, INA226_REG_BUSVOLTAGE, &voltage);
+    res = ina_readRegister(id, INA226_REG_BUSVOLTAGE, voltage);
 
-    return (voltage);
+    return res;
 }
 
 /**
