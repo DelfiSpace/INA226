@@ -15,93 +15,64 @@
 #ifndef __INA226_H__
 #define __INA226_H__
 
-#include "satellite.h"
-#include <stdint.h>
-#include <stdbool.h>
+#include <DWire.h>
 
+#define INA226_DEVICE_ID            (0x2260)
+#define INA226_RESET                (0x8000)
+#define INA226_CALIBRATION_REF       40.96f
 
-typedef enum
+#define INA226_REG_CONFIG           (0x00)
+#define INA226_REG_SHUNTVOLTAGE     (0x01)
+#define INA226_REG_BUSVOLTAGE       (0x02)
+#define INA226_REG_POWER            (0x03)
+#define INA226_REG_CURRENT          (0x04)
+#define INA226_REG_CALIBRATION      (0x05)
+#define INA226_REG_MASKENABLE       (0x06)
+#define INA226_REG_ALERTLIMIT       (0x07)
+#define INA226_REG_ALERTLIMIT       (0x07)
+#define INA226_REG_ID               (0xFF)
+
+#define INA226_BIT_SOL              (0x8000)
+#define INA226_BIT_SUL              (0x4000)
+#define INA226_BIT_BOL              (0x2000)
+#define INA226_BIT_BUL              (0x1000)
+#define INA226_BIT_POL              (0x0800)
+#define INA226_BIT_CNVR             (0x0400)
+#define INA226_BIT_AFF              (0x0010)
+#define INA226_BIT_CVRF             (0x0008)
+#define INA226_BIT_OVF              (0x0004)
+#define INA226_BIT_APOL             (0x0002)
+#define INA226_BIT_LEN              (0x0001)
+
+class INA226
+
 {
-    INA226_AVERAGES_1             = 0b000,
-    INA226_AVERAGES_4             = 0b001,
-    INA226_AVERAGES_16            = 0b010,
-    INA226_AVERAGES_64            = 0b011,
-    INA226_AVERAGES_128           = 0b100,
-    INA226_AVERAGES_256           = 0b101,
-    INA226_AVERAGES_512           = 0b110,
-    INA226_AVERAGES_1024          = 0b111
-} ina226_averages_t;
+protected:
+    DWire &wire;
+    unsigned char address;
 
-typedef enum
-{
-    INA226_BUS_CONV_TIME_140US    = 0b000,
-    INA226_BUS_CONV_TIME_204US    = 0b001,
-    INA226_BUS_CONV_TIME_332US    = 0b010,
-    INA226_BUS_CONV_TIME_588US    = 0b011,
-    INA226_BUS_CONV_TIME_1100US   = 0b100,
-    INA226_BUS_CONV_TIME_2116US   = 0b101,
-    INA226_BUS_CONV_TIME_4156US   = 0b110,
-    INA226_BUS_CONV_TIME_8244US   = 0b111
-} ina226_busConvTime_t;
+public:
+    INA226(DWire&, unsigned char);
+    virtual ~INA226( ) {};
 
-typedef enum
-{
-    INA226_SHUNT_CONV_TIME_140US   = 0b000,
-    INA226_SHUNT_CONV_TIME_204US   = 0b001,
-    INA226_SHUNT_CONV_TIME_332US   = 0b010,
-    INA226_SHUNT_CONV_TIME_588US   = 0b011,
-    INA226_SHUNT_CONV_TIME_1100US  = 0b100,
-    INA226_SHUNT_CONV_TIME_2116US  = 0b101,
-    INA226_SHUNT_CONV_TIME_4156US  = 0b110,
-    INA226_SHUNT_CONV_TIME_8244US  = 0b111
-} ina226_shuntConvTime_t;
+    unsigned char reset();
+    unsigned char ping();
 
-typedef enum
-{
-    INA226_MODE_POWER_DOWN      = 0b000,
-    INA226_MODE_SHUNT_TRIG      = 0b001,
-    INA226_MODE_BUS_TRIG        = 0b010,
-    INA226_MODE_SHUNT_BUS_TRIG  = 0b011,
-    INA226_MODE_ADC_OFF         = 0b100,
-    INA226_MODE_SHUNT_CONT      = 0b101,
-    INA226_MODE_BUS_CONT        = 0b110,
-    INA226_MODE_SHUNT_BUS_CONT  = 0b111,
-} ina226_mode_t;
+    // configure the device
+    unsigned char setShuntResistor(double);
 
+    // functions used to retrieve the measurements from the device
+    unsigned char getShuntVoltage(signed short &);
+    unsigned char getVoltage(unsigned short &);
+    unsigned char getCurrent(signed short &);
+    unsigned char getPower(unsigned short &);
 
-void INA226_configure(const dev_id id,
-                      ina226_averages_t avg,
-                      ina226_busConvTime_t busConvTime,
-                      ina226_shuntConvTime_t shuntConvTime,
-                      ina226_mode_t mode);
+    // used only for debug purposes, use the other functions in normal code
+    unsigned char readRegister(unsigned char, unsigned short &);
+    unsigned char writeRegister(unsigned char, unsigned short);
 
-bool INA226_calibrate(const dev_id id,
-                      float rShunt,
-                      float iMaxExpected,
-                      float *currentLSB,
-                      float *powerLSB);
+private:
 
-uint16_t INA226_getConfig(const dev_id id);
-
-uint16_t INA226_getCalibration(const dev_id id);
-
-float INA226_readBusPower(const dev_id id, float powerLSB);
-float INA226_readShuntCurrent(const dev_id id, float currentLSB);
-float INA226_readShuntVoltage(const dev_id id);
-float INA226_readBusVoltage(const dev_id id);
-
-bool INA226_readBusPower_raw(const dev_id id, uint16_t *power);
-bool INA226_readShuntCurrent_raw(const dev_id id, uint16_t *current);
-bool INA226_readShuntVoltage_raw(const dev_id id, uint16_t *voltage);
-bool INA226_readBusVoltage_raw(const dev_id id, uint16_t *voltage);
-
-float INA226_rawBusPower(int16_t power, float powerLSB);
-float INA226_rawShuntCurrent(int16_t current, float currentLSB);
-float INA226_rawShuntVoltage(int16_t voltage);
-float INA226_rawBusVoltage(uint16_t voltage);
-
-void ina_reset(dev_id id);
-
-bool ina_readDeviceID(dev_id id);
+};
 
 #endif // __INA226_H__
