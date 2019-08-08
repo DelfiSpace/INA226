@@ -176,6 +176,7 @@ unsigned char INA226::readRegister(unsigned char reg, unsigned short &output)
     }
     else
     {
+        output = 0;
         return 1;
     }
 }
