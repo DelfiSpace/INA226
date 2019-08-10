@@ -91,6 +91,10 @@ unsigned char INA226::getVoltage(unsigned short &v)
 {
     unsigned char ret = readRegister(INA226_REG_BUSVOLTAGE, v);
     v = v + (v >> 2);
+    if (ret)
+    {
+        v = USHRT_MAX;
+    }
     return ret;
 }
 
@@ -108,7 +112,12 @@ unsigned char INA226::getVoltage(unsigned short &v)
  */
 unsigned char INA226::getShuntVoltage(signed short &v)
 {
-    return readRegister(INA226_REG_SHUNTVOLTAGE, reinterpret_cast<unsigned short&>(v));
+    unsigned char ret = readRegister(INA226_REG_SHUNTVOLTAGE, reinterpret_cast<unsigned short&>(v));
+    if (ret)
+    {
+        v = SHRT_MAX;
+    }
+    return ret;
 }
 
 /**
@@ -127,6 +136,10 @@ unsigned char INA226::getCurrent(signed short &c)
 {
     unsigned char ret = readRegister(INA226_REG_CURRENT, reinterpret_cast<unsigned short&>(c));
     c >>= 3;
+    if (ret)
+    {
+        c = SHRT_MAX;
+    }
     return ret;
 }
 
@@ -146,6 +159,10 @@ unsigned char INA226::getPower(unsigned short &p)
 {
     unsigned char ret = readRegister(INA226_REG_POWER, p);
     p = (p * 3) + (p >> 3);
+    if (ret)
+    {
+        p = USHRT_MAX;
+    }
     return ret;
 }
 
@@ -176,7 +193,6 @@ unsigned char INA226::readRegister(unsigned char reg, unsigned short &output)
     }
     else
     {
-        output = 0;
         return 1;
     }
 }

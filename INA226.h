@@ -15,6 +15,7 @@
 #ifndef __INA226_H__
 #define __INA226_H__
 
+#include <limits.h>
 #include <DWire.h>
 
 #define INA226_DEVICE_ID            (0x2260)
