@@ -20,7 +20,7 @@
 
 #define INA226_DEVICE_ID            (0x2260)
 #define INA226_RESET                (0x8000)
-#define INA226_CALIBRATION_REF       40.96f
+#define INA226_CALIBRATION_REF       40960
 
 #define INA226_REG_CONFIG           (0x00)
 #define INA226_REG_SHUNTVOLTAGE     (0x01)
@@ -60,7 +60,7 @@ public:
     unsigned char ping();
 
     // configure the device
-    unsigned char setShuntResistor(double);
+    unsigned char setShuntResistor( unsigned short );
 
     // functions used to retrieve the measurements from the device
     unsigned char getShuntVoltage(signed short &);

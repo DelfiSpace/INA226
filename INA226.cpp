@@ -60,19 +60,19 @@ unsigned char INA226::ping()
 
 /**
  *
- *   Sets the shunt resistor value in Ohm
+ *   Sets the shunt resistor value in mOhm
  *
  *   Parameters:
- *   double shunt          shunt resistor value in Ohm
+ *   unsigned short shunt  shunt resistor value in mOhm
  *
  *   Returns:
- *   unsigned char         0 succes
+ *   unsigned char         0 success
  *                         1 fail
  *
  */
-unsigned char INA226:: setShuntResistor(double shunt)
+unsigned char INA226:: setShuntResistor(unsigned short shunt)
 {
-    return writeRegister(INA226_REG_CALIBRATION, (unsigned short)(INA226_CALIBRATION_REF / shunt));
+    return writeRegister(INA226_REG_CALIBRATION, INA226_CALIBRATION_REF / shunt);
 }
 
 /**
@@ -83,7 +83,7 @@ unsigned char INA226:: setShuntResistor(double shunt)
  *   unsigned short &      bus voltage in mV
  *
  *   Returns:
- *   unsigned char         0 succes
+ *   unsigned char         0 success
  *                         1 fail
  *
  */
@@ -106,7 +106,7 @@ unsigned char INA226::getVoltage(unsigned short &v)
  *   signed short &      bus voltage (LSB = 2.5 uV)
  *
  *   Returns:
- *   unsigned char         0 succes
+ *   unsigned char         0 success
  *                         1 fail
  *
  */
@@ -128,7 +128,7 @@ unsigned char INA226::getShuntVoltage(signed short &v)
  *   signed short &        current in mA
  *
  *   Returns:
- *   unsigned char         0 succes
+ *   unsigned char         0 success
  *                         1 fail
  *
  */
@@ -151,7 +151,7 @@ unsigned char INA226::getCurrent(signed short &c)
  *   unsigned short &      power in mW
  *
  *   Returns:
- *   unsigned char         0 succes
+ *   unsigned char         0 success
  *                         1 fail
  *
  */
@@ -175,7 +175,7 @@ unsigned char INA226::getPower(unsigned short &p)
  *   unsigned short &      register value
  *
  *   Returns:
- *   unsigned char         0 succes
+ *   unsigned char         0 success
  *                         1 fail
  *
  */
@@ -206,7 +206,7 @@ unsigned char INA226::readRegister(unsigned char reg, unsigned short &output)
  *   unsigned short        register value
  *
  *   Returns:
- *   unsigned char         0 succes
+ *   unsigned char         0 success
  *                         1 fail
  *
  */
