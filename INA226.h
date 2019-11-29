@@ -68,11 +68,10 @@ public:
     unsigned char getCurrent(signed short &);
     unsigned char getPower(unsigned short &);
 
-    // used only for debug purposes, use the other functions in normal code
+private:
+    // only for use
     unsigned char readRegister(unsigned char, unsigned short &);
     unsigned char writeRegister(unsigned char, unsigned short);
-
-private:
 
 };
 
