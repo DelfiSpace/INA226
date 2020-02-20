@@ -135,7 +135,7 @@ unsigned char INA226::getShuntVoltage(signed short &v)
 unsigned char INA226::getCurrent(signed short &c)
 {
     unsigned char ret = readRegister(INA226_REG_CURRENT, reinterpret_cast<unsigned short&>(c));
-    c >>= 3;
+    c/=8;
     if (ret)
     {
         c = SHRT_MAX;
