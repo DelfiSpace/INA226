@@ -30,7 +30,6 @@
 #define INA226_REG_CALIBRATION      (0x05)
 #define INA226_REG_MASKENABLE       (0x06)
 #define INA226_REG_ALERTLIMIT       (0x07)
-#define INA226_REG_ALERTLIMIT       (0x07)
 #define INA226_REG_ID               (0xFF)
 
 #define INA226_BIT_SOL              (0x8000)
@@ -61,6 +60,9 @@ public:
 
     // configure the device
     unsigned char setShuntResistor( unsigned short );
+    unsigned char setAlertLimitBusVoltage( unsigned short );
+    unsigned char setAlertEnableBusUnderVoltage();
+
 
     // functions used to retrieve the measurements from the device
     unsigned char getShuntVoltage(signed short &);

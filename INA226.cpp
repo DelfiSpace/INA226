@@ -75,6 +75,15 @@ unsigned char INA226:: setShuntResistor(unsigned short shunt)
     return writeRegister(INA226_REG_CALIBRATION, INA226_CALIBRATION_REF / shunt);
 }
 
+unsigned char INA226:: setAlertLimitBusVoltage(unsigned short limit)
+{
+    return writeRegister(INA226_REG_ALERTLIMIT, 0.8 * limit);  //translate voltage to whole decimal (/2.5uV)
+}
+
+unsigned char INA226:: setAlertEnableBusUnderVoltage()
+{
+    return writeRegister(INA226_REG_MASKENABLE, INA226_BIT_BUL);
+}
 /**
  *
  *   Returns the bus voltage in mV
